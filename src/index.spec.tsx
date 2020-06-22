@@ -2,7 +2,7 @@ import React from "react";
 import { UserManager, User } from "oidc-client";
 import { render, cleanup } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { Authenticate } from ".";
+import { Authenticate } from "./authenticate";
 import { useUserIdentity } from "./context";
 
 describe("molecules/authentication", () => {
