@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "lib": ["DOM", "ES5", "ES2015.Promise"],
+    "jsx": "react",
+    "declaration": true,
+    "module": "commonjs",
+    "target": "es5"
+  },
+  "exclude": ["node_modules", "lib"]
+}
