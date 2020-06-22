@@ -3,6 +3,10 @@ import { UserManagerSettings, UserManager } from "oidc-client";
 export let userManager: UserManager;
 
 export function createUserManager(cfg: UserManagerSettings) {
+  /** ensure that only a single instance exists during app execution */
+  if (userManager) {
+    return userManager;
+  }
   return (userManager = new UserManager(cfg));
 }
 
