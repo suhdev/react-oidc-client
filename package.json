@@ -1,6 +1,6 @@
 {
   "name": "react-oidc-client",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "main": "lib/es5/commonjs/index.js",
   "description": "A declarative approach to working with oidc-client",
   "author": "Suhail Abood <suhail@stickyants.com>",

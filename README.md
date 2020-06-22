@@ -139,3 +139,46 @@ ReactDOM.render(
   </Authenticate>
 );
 ```
+
+### 5. Access Loggedin User Info
+
+When using create-react-app, one might use the homepage property
+if the application isn't hosted at the root of the server.
+See [here](https://create-react-app.dev/docs/deployment/#building-for-relative-paths) for more info.
+If that's the case, you need provide the base name (as specified in the homepage property
+in order for the user to be redirected back to the appropraite page, as otherwise,
+the user will be redirected to paths relative to the root. See the example below:
+
+```typescript
+import React from "react";
+import ReactDOM from "react-dom";
+import { Authenticate, useUserIdentity } from "react-oidc-client";
+const MySecretContent:React.FC = () => {
+  const user = useUserIdentity();
+  return <div>{user.profile.name}</div>
+};
+const LoadingComponent:React.FC = ()=<div>My loader</div>
+ReactDOM.render(
+  <Authenticate
+    basename="/myfolderpath"
+    LoadingComponent={LoadingComponent}
+    loginCompletePath="/my_login_complete_path"
+    logoutPath="/my_logout_path"
+    userManagerSettings={{
+      loadUserInfo: true,
+      userStore: new WebStorageStateStore({
+        store: localStorage
+      }),
+      authority: "http://localhost:5000",
+      client_id: "JAVASCRIPT_CLIENT_ID",
+      redirect_uri: "http://localhost:3000/my_login_complete_path",
+      response_type: "id_token token",
+      response_mode: "fragment",
+      scope: "openid profile", // add other scopes here
+      post_logout_redirect_uri: "http://localhost:3000/my_logout_path"
+    }}
+  >
+    <MySecretContent />
+  </Authenticate>
+);
+```
