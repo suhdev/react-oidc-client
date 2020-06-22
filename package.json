@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "jest",
-    "prepublish": "./build.sh"
+    "build": "./build.sh"
   },
   "devDependencies": {
     "@testing-library/react": "^10.3.0",
