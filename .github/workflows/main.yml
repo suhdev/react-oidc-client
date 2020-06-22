@@ -2,25 +2,25 @@ name: CI
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    tags:
+      - v**
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       - name: Setup Node.js environment
         uses: actions/setup-node@v1.4.2
-      - name: Setup auth tokens
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > .npmrc
       - name: Install dependencies
         run: yarn install
       - name: Test
         run: yarn test
+      - name: Setup auth tokens
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > .npmrc
+      - name: Build
+        run: yarn build
       - name: Build and Publish
         run: yarn publish
