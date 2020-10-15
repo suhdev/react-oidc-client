@@ -58,7 +58,7 @@ export const getAppToken = async () => {
     throw new Error("User is not logged in");
   }
 
-  return user.access_token;
+  return user.access_token || user.id_token;
 };
 
 export const getUser = async () => {
