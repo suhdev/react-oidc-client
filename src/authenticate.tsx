@@ -124,7 +124,7 @@ const Loading: React.FC = () => <div>Loading...</div>;
 
 export const Authenticate: React.FC<{
   userManager?: UserManager;
-  userManagerSettings: UserManagerSettings;
+  userManagerSettings?: UserManagerSettings;
   loginCompletePath?: string;
   basename?: string;
   logoutPath?: string;
