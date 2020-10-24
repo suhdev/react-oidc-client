@@ -2,7 +2,7 @@ import { UserManager, UserManagerSettings, User } from "oidc-client";
 import Async from "react-async";
 import React, { useCallback, useState } from "react";
 import { Redirect, Switch, Route } from "react-router-dom";
-import { createUserManager } from "./constants";
+import { createUserManager, setUserManager } from "./constants";
 import { AuthenticationProvider } from "./context";
 
 const REDIRECT_URL_KEY = "REDIRECT_URL";
@@ -141,6 +141,10 @@ export const Authenticate: React.FC<{
   const [mgr] = useState(
     () => userManager || createUserManager(userManagerSettings)
   );
+
+  if (userManager) {
+    setUserManager(userManager);
+  }
 
   return (
     <Switch>

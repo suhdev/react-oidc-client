@@ -10,6 +10,10 @@ export function createUserManager(cfg: UserManagerSettings) {
   return (userManager = new UserManager(cfg));
 }
 
+export function setUserManager(manager: UserManager) {
+  userManager = manager;
+}
+
 export async function forceRefreshUser() {
   let user;
 
