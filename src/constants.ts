@@ -59,9 +59,13 @@ export function getExpiresAtDateFromJwt(token: string) {
     : undefined;
 }
 
-export function setupTokenExpiryWindow() {
+export function setupTokenRefreshLoop(onStop: (restart: () => void) => void) {
   async function checkExpiryDate() {
     const user = await getUserSilently();
+    if (!user) {
+      onStop(checkExpiryDate);
+      return;
+    }
     const expiresAt =
       user.expires_at ||
       getExpiresAtDateFromJwt(user.access_token || user.id_token);
@@ -70,6 +74,7 @@ export function setupTokenExpiryWindow() {
     if (timeLeftInMs < 0) {
       await userManager.revokeAccessToken();
       await userManager.removeUser();
+      onStop(checkExpiryDate);
       return;
     }
 
