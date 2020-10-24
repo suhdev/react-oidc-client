@@ -1,6 +1,7 @@
 import { UserManagerSettings, UserManager } from "oidc-client";
 
 export let userManager: UserManager;
+const RENEW_THRESHOLD = 5000;
 
 export function createUserManager(cfg: UserManagerSettings) {
   /** ensure that only a single instance exists during app execution */
@@ -47,10 +48,40 @@ export function parseJwtToken(token: string) {
 }
 
 export function getIsExpiredFromJwt(token: string) {
+  const expiresAt = getExpiresAtDateFromJwt(token);
+  return expiresAt === undefined ? undefined : +expiresAt < Date.now();
+}
+
+export function getExpiresAtDateFromJwt(token: string) {
   const parsedToken = parseJwtToken(token);
   return typeof parsedToken.exp !== "undefined"
     ? new Date(parsedToken.exp * 1000)
     : undefined;
+}
+
+export function setupTokenExpiryWindow() {
+  async function checkExpiryDate() {
+    const user = await getUserSilently();
+    const expiresAt =
+      user.expires_at ||
+      getExpiresAtDateFromJwt(user.access_token || user.id_token);
+    const timeLeftInMs = +expiresAt - Date.now();
+    const tillNextRefresh = timeLeftInMs - RENEW_THRESHOLD;
+    if (timeLeftInMs < 0) {
+      await userManager.revokeAccessToken();
+      await userManager.removeUser();
+      return;
+    }
+
+    if (timeLeftInMs < RENEW_THRESHOLD) {
+      const user = await userManager.signinSilent();
+      await userManager.storeUser(user);
+    }
+
+    setTimeout(checkExpiryDate, Math.min(tillNextRefresh, timeLeftInMs));
+  }
+
+  checkExpiryDate();
 }
 
 export async function getUserSilently() {
