@@ -54,7 +54,7 @@ export function getIsExpiredFromJwt(token: string) {
 
 export function getExpiresAtDateFromJwt(token: string) {
   const parsedToken = parseJwtToken(token);
-  return typeof parsedToken.exp !== "undefined"
+  return parsedToken && typeof parsedToken.exp !== "undefined"
     ? new Date(parsedToken.exp * 1000)
     : undefined;
 }
@@ -93,9 +93,10 @@ export async function getUserSilently() {
   let user = await userManager.getUser();
 
   const expired =
-    typeof user.expired === "undefined"
-      ? getIsExpiredFromJwt(user.id_token || user.access_token)
-      : user.expired;
+    !user ||
+    ((user.id_token || user.access_token) &&
+      getIsExpiredFromJwt(user.id_token || user.access_token)) ||
+    user.expired;
 
   if (!user || expired) {
     user = null;
