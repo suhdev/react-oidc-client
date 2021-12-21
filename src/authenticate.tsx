@@ -1,7 +1,7 @@
 import { UserManager, UserManagerSettings, User } from "oidc-client";
 import Async from "react-async";
 import React, { useCallback, useState } from "react";
-import { Redirect, Switch, Route } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { createUserManager, setUserManager } from "./constants";
 import { AuthenticationProvider } from "./context";
 
@@ -28,7 +28,7 @@ const LoginComplete: React.FC<{
         <LoadingComponent />
       </Async.Loading>
       <Async.Resolved>
-        <Redirect to={redirectTo} />
+        <Navigate to={redirectTo} />
       </Async.Resolved>
       <Async.Rejected>
         <Logout manager={manager} />
@@ -47,7 +47,7 @@ const Logout: React.FC<{ manager: UserManager }> = ({ manager }) => {
   return (
     <Async promiseFn={loginFailed}>
       <Async.Settled>
-        <Redirect to="/" />
+        <Navigate to="/" />
       </Async.Settled>
     </Async>
   );
@@ -147,22 +147,26 @@ export const Authenticate: React.FC<{
   }
 
   return (
-    <Switch>
-      <Route path={loginCompletePath}>
-        <LoginComplete manager={mgr} LoadingComponent={LoadingComponent} />
-      </Route>
-      <Route path={logoutPath}>
-        <Logout manager={mgr} />
-      </Route>
-      <Route path="/">
-        <AuthenticateInner
-          manager={mgr}
-          basename={basename}
-          LoadingComponent={LoadingComponent}
-        >
-          {children}
-        </AuthenticateInner>
-      </Route>
-    </Switch>
+    <Routes>
+      <Route
+        path={loginCompletePath}
+        element={
+          <LoginComplete manager={mgr} LoadingComponent={LoadingComponent} />
+        }
+      />
+      <Route path={logoutPath} element={<Logout manager={mgr} />} />
+      <Route
+        path="/"
+        element={
+          <AuthenticateInner
+            manager={mgr}
+            basename={basename}
+            LoadingComponent={LoadingComponent}
+          >
+            {children}
+          </AuthenticateInner>
+        }
+      />
+    </Routes>
   );
 };
